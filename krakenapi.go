@@ -5,14 +5,12 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"math/big"
-	"mime"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -590,58 +588,79 @@ func (api *KrakenAPI) queryPrivate(method string, values url.Values, typ interfa
 func (api *KrakenAPI) doRequest(reqURL string, values url.Values, headers map[string]string, typ interface{}) (interface{}, error) {
 
 	// Create request
-	req, err := http.NewRequest("POST", reqURL, strings.NewReader(values.Encode()))
-	if err != nil {
-		return nil, fmt.Errorf("Could not execute request! #1 (%s)", err.Error())
-	}
 
-	req.Header.Add("User-Agent", APIUserAgent)
-	for key, value := range headers {
-		req.Header.Add(key, value)
-	}
+	fmt.Println("####################################")
+	fmt.Println("####################################")
+	fmt.Println("####################################")
+	fmt.Println("####################################")
+	fmt.Println("####################################")
+	fmt.Println(reqURL, "======================> reqURL")
+	fmt.Println(values, "======================> values")
+	fmt.Println(headers, "======================> headers")
+	fmt.Println(typ, "======================> typ")
+	fmt.Println("####################################")
+	fmt.Println("####################################")
+	fmt.Println("####################################")
+	fmt.Println("####################################")
+	fmt.Println("####################################")
+	fmt.Println("####################################")
 
-	// Execute request
-	resp, err := api.client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("Could not execute request! #2 (%s)", err.Error())
-	}
-	defer resp.Body.Close()
+	os.Exit(1)
+	/*
+		req, err := http.NewRequest("POST", reqURL, strings.NewReader(values.Encode()))
+		if err != nil {
+			return nil, fmt.Errorf("Could not execute request! #1 (%s)", err.Error())
+		}
 
-	// Read request
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("Could not execute request! #3 (%s)", err.Error())
-	}
+		req.Header.Add("User-Agent", APIUserAgent)
+		for key, value := range headers {
+			req.Header.Add(key, value)
+		}
 
-	// Check mime type of response
-	mimeType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
-	if err != nil {
-		return nil, fmt.Errorf("Could not execute request #4! (%s)", err.Error())
-	}
-	if mimeType != "application/json" {
-		return nil, fmt.Errorf("Could not execute request #5! (%s)", fmt.Sprintf("Response Content-Type is '%s', but should be 'application/json'.", mimeType))
-	}
+		// Execute request
+		resp, err := api.client.Do(req)
+		if err != nil {
+			return nil, fmt.Errorf("Could not execute request! #2 (%s)", err.Error())
+		}
+		defer resp.Body.Close()
 
-	// Parse request
-	var jsonData KrakenResponse
+		// Read request
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("Could not execute request! #3 (%s)", err.Error())
+		}
 
-	// Set the KrakenResponse.Result to typ so `json.Unmarshal` will
-	// unmarshal it into given type, instead of `interface{}`.
-	if typ != nil {
-		jsonData.Result = typ
-	}
+		// Check mime type of response
+		mimeType, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return nil, fmt.Errorf("Could not execute request #4! (%s)", err.Error())
+		}
+		if mimeType != "application/json" {
+			return nil, fmt.Errorf("Could not execute request #5! (%s)", fmt.Sprintf("Response Content-Type is '%s', but should be 'application/json'.", mimeType))
+		}
 
-	err = json.Unmarshal(body, &jsonData)
-	if err != nil {
-		return nil, fmt.Errorf("Could not execute request! #6 (%s)", err.Error())
-	}
+		// Parse request
+		var jsonData KrakenResponse
 
-	// Check for Kraken API error
-	if len(jsonData.Error) > 0 {
-		return nil, fmt.Errorf("Could not execute request! #7 (%s)", jsonData.Error)
-	}
+		// Set the KrakenResponse.Result to typ so `json.Unmarshal` will
+		// unmarshal it into given type, instead of `interface{}`.
+		if typ != nil {
+			jsonData.Result = typ
+		}
 
-	return jsonData.Result, nil
+		err = json.Unmarshal(body, &jsonData)
+		if err != nil {
+			return nil, fmt.Errorf("Could not execute request! #6 (%s)", err.Error())
+		}
+
+		// Check for Kraken API error
+		if len(jsonData.Error) > 0 {
+			return nil, fmt.Errorf("Could not execute request! #7 (%s)", jsonData.Error)
+		}
+
+		return jsonData.Result, nil
+	*/
+	return "stop", nil
 }
 
 // isStringInSlice is a helper function to test if given term is in a list of strings
